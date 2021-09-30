@@ -8,5 +8,5 @@ app.use(logger.logRequest);
 app.use(require('./routers/userRouter'));
 
 app.listen(3000, () => {
-  logger.logInfo('Node server running on http://localhost:3000');
+  logger.info('Node server running on http://localhost:3000');
 });

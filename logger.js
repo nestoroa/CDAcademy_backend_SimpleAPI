@@ -4,31 +4,44 @@ const winston = require('winston');
 const consoleTransport = new winston.transports.Console();
 const fileTransport = new winston.transports.File({ filename: './log/api.log' });
 const fileErrorTransport = new winston.transports.File({ filename: './log/error.log', level: 'error' });
+const fileDebugTransport = new winston.transports.File({ filename: './log/debug.log', level: 'debug' });
+
+const {
+  combine, timestamp, label, printf,
+} = winston.format;
+
+const myFormat = printf(({
+  level, message, label, timestamp,
+}) => `${timestamp} [${label}] ${level}: ${message}`);
+
 const WinstonOptions = {
-  transports: [consoleTransport, fileTransport, fileErrorTransport],
+  format: combine(
+    label({ label: 'SimpleAPI by NESTOR' }),
+    timestamp(),
+    myFormat,
+  ),
+  transports: [consoleTransport, fileTransport, fileErrorTransport, fileDebugTransport],
 };
 
 const logger = new winston.createLogger(WinstonOptions);
 
 function logRequest(req, res, next) {
-  logger.info(req.originalUrl);
-  logger.debug(req.originalUrl, req.body);
+  logger.info(`${req.method} ${req.originalUrl}`);
+  logger.debug(`${req.method} ${req.originalUrl}\: ${req}`);
   next();
 }
 
-function logInfo(message) {
+function info(message) {
   logger.info(message);
 }
 
-function logError(err, req, res, next) {
+function error(err, req, res, next) {
   logger.error(err);
   next();
 }
 
-logger.info('Logger successfully started');
-
 module.exports = {
-  logInfo,
-  logError,
+  info,
+  error,
   logRequest,
 };

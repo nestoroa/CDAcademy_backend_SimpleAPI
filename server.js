@@ -1,10 +1,13 @@
 const mongoose = require('mongoose');
+const logger = require('./logger');
 
-mongoose.connect('mongodb://localhost/academy', (err) => {
+const dbUri = 'mongodb://localhost/academy';
+
+mongoose.connect(dbUri, (err) => {
   if (err) {
-    console.log(`Error connecting to Database: ${err}`);
+    logger.error(`Error connecting to Database: ${err}`);
   } else {
-    console.log('Everything alright with the DB connection');
+    logger.info('Successfuly connected to Mongodb database');
   }
 });
 
